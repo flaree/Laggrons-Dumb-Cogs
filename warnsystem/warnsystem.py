@@ -163,6 +163,22 @@ class WarnSystem(SettingsMixin, AutomodMixin, commands.Cog, metaclass=CompositeM
         ban_days: Optional[int] = None,
     ):
         """No need to repeat, let's do what's common to all 5 warnings."""
+        cog = self.bot.get_cog("DragonTools")
+        if cog:
+            TYPES = {
+                1: "warn",
+                2: "mute",
+                3: "kick",
+                4: "softban",
+                5: "ban",
+            }
+            async with cog.config.moderation() as mod:
+                if ctx.author.id not in mod:
+                    mod[ctx.author.id] = {}
+                if TYPES[level] not in mod[ctx.author.id]:
+                    mod[ctx.author.id][TYPES[level]] = 0
+                mod[ctx.author.id][TYPES[level]] += 1
+                
         reason = await self.api.format_reason(ctx.guild, reason)
         if reason and len(reason) > 2000:  # embed limits
             await ctx.send(

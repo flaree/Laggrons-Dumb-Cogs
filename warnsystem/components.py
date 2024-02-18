@@ -215,6 +215,11 @@ class WarningEditionView(View):
     )
     async def delete_button(self, interaction: discord.Interaction, button: Button):
         guild = interaction.guild
+        if self.case["author"] != interaction.user.id and 1049119446372986921 not in [x.id for x in interaction.user.roles]:
+            await interaction.response.send_message(
+                _("You can't delete a case you didn't create."), ephemeral=True
+            )
+            return
         embed = discord.Embed()
         can_unmute = False
         add_roles = False
